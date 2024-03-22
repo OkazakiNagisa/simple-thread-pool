@@ -1,11 +1,6 @@
-module;
-
-#include <print>
-#include <source_location>
-
 export module main;
-
-export import lib;
+import std_module;
+import lib;
 using namespace lib;
 
 int main()

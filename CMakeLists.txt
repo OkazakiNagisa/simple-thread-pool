@@ -8,6 +8,7 @@ target_sources(
     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
     FILES
         src/main.cppm
+        src/std_module.cppm
         src/lib.cppm
         src/ThreadPool.cppm
 )
