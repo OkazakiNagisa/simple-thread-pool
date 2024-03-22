@@ -1,0 +1,39 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "clang",
+            "inherits": [
+                "compiler.clang",
+                "base"
+            ]
+        },
+        {
+            "name": "clangcl",
+            "inherits": [
+                "compiler.clangcl",
+                "base"
+            ]
+        },
+        {
+            "name": "msvc",
+            "inherits": [
+                "compiler.msvc",
+                "base"
+            ]
+        },
+        {
+            "name": "base",
+            "hidden": true,
+            "inherits": [
+                "arch.x86.64"
+            ],
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        }
+    ]
+}

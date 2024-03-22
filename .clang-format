@@ -1,0 +1,13 @@
+Language: Cpp
+BasedOnStyle: Microsoft
+AccessModifierOffset: -4
+AlignArrayOfStructures: Left
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveMacros: Consecutive
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
+BraceWrapping:
+    AfterCaseLabel: true
+    AfterUnion: true
+ColumnLimit: 80
+SortIncludes: Never
