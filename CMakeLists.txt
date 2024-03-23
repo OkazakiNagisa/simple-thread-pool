@@ -9,25 +9,25 @@ target_sources(
         src/main.cc
 )
 
-add_executable(${PROJECT_NAME}_module)
-set_target_properties(${PROJECT_NAME}_module PROPERTIES CXX_STANDARD 23)
-target_sources(
-    ${PROJECT_NAME}_module
-    PRIVATE FILE_SET cxx_modules TYPE CXX_MODULES
-    FILES
-        src_module/main.cppm
-        src_module/lib.cppm
-        src_module/ThreadPool.cppm
-)
+# add_executable(${PROJECT_NAME}_module)
+# set_target_properties(${PROJECT_NAME}_module PROPERTIES CXX_STANDARD 23)
+# target_sources(
+#     ${PROJECT_NAME}_module
+#     PRIVATE FILE_SET cxx_modules TYPE CXX_MODULES
+#     FILES
+#         src_module/main.cppm
+#         src_module/lib.cppm
+#         src_module/ThreadPool.cppm
+# )
 
-add_library(std_module)
-set_target_properties(std_module PROPERTIES CXX_STANDARD 23)
-target_sources(
-    std_module
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
-    FILES
-        std_module/std.ixx
-        std_module/std.compat.ixx
-)
+# add_library(std_module)
+# set_target_properties(std_module PROPERTIES CXX_STANDARD 23)
+# target_sources(
+#     std_module
+#     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+#     FILES
+#         std_module/std.ixx
+#         std_module/std.compat.ixx
+# )
 
-target_link_libraries(${PROJECT_NAME}_module PRIVATE std_module)
+# target_link_libraries(${PROJECT_NAME}_module PRIVATE std_module)

@@ -1,11 +1,12 @@
-export module main;
-import std;
-import lib;
-using namespace lib;
+#include <print>
+#include <source_location>
+#include "ThreadPool.h"
 
-export int main()
+int main()
 {
-    ThreadPool tp;
+    auto tp = ThreadPool(4);
+    // ThreadPool tn = std::move(tp);
+
     std::println("Hello from {}!",
                  std::source_location::current().function_name());
     return 0;
