@@ -8,7 +8,18 @@ target_sources(
     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
     FILES
         src/main.cppm
-        src/std_module.cppm
         src/lib.cppm
         src/ThreadPool.cppm
 )
+
+add_library(std_module)
+set_target_properties(std_module PROPERTIES CXX_STANDARD 23)
+target_sources(
+    std_module
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+    FILES
+        std_module/std.ixx
+        std_module/std.compat.ixx
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE std_module)

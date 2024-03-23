@@ -1,9 +1,9 @@
 export module main;
-import std_module;
+import std;
 import lib;
 using namespace lib;
 
-int main()
+export int main()
 {
     ThreadPool tp;
     std::println("Hello from {}!",
