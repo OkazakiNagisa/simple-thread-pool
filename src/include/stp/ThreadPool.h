@@ -29,7 +29,10 @@ public:
                         if (this->SuicideFlag)
                             return;
                         else
-                            task = this->ConsumeTask();
+                        {
+                            task = std::move(this->Tasks.back());
+                            Tasks.pop_back();
+                        }
                     }
                     task();
                 }
@@ -39,7 +42,10 @@ public:
 
     ~ThreadPool()
     {
-        SuicideFlag = true;
+        {
+            auto lock = std::lock_guard<std::mutex>(TasksMutex);
+            SuicideFlag = true;
+        }
         ConditionVar.notify_all();
         for (auto &&thread : Threads)
         {
@@ -52,26 +58,19 @@ public:
     ThreadPool(const ThreadPool &) = delete;
     ThreadPool &operator==(const ThreadPool &) = delete;
 
-    std::packaged_task<int()> ConsumeTask()
-    {
-        auto lock = std::lock_guard<std::mutex>(TasksMutex);
-        auto &&ret = std::move(Tasks.back());
-        Tasks.pop_back();
-        return ret;
-    }
-
     std::future<int> EnqueueTask(std::function<int(int)> task, int parameter)
     {
         auto packaged = std::packaged_task<int()>(std::bind(task, parameter));
+        auto ret = packaged.get_future();
         {
             auto lock = std::lock_guard<std::mutex>(TasksMutex);
             Tasks.push_front(std::move(packaged));
         }
         ConditionVar.notify_one();
-        return packaged.get_future();
+        return ret;
     }
 
-    void WaitToFinish()
+    void WaitAll()
     {
         auto lock = std::unique_lock<std::mutex>(this->TasksMutex);
         this->ConditionVar.wait(lock, [this]() { return this->Tasks.empty(); });
