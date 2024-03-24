@@ -7,39 +7,77 @@
 class ThreadPool
 {
 public:
-    explicit ThreadPool(const int threads) : Threads(threads)
+    explicit ThreadPool(const int threadsCount)
+        : SuicideFlag(false), Threads(threadsCount)
     {
-        for (int i = 0; i < threads; i++)
+        for (int i = 0; i < threadsCount; i++)
         {
-            Threads.emplace_back(std::thread([this, i]() {
+            Threads.emplace_back([this, i]() {
                 while (true)
                 {
-                    std::this_thread::yield();
+                    std::packaged_task<int()> task;
+                    {
+                        auto lock =
+                            std::unique_lock<std::mutex>(this->TasksMutex);
+                        this->ConditionVar.wait(lock, [this]() {
+                            return this->Tasks.size() > 0 || this->SuicideFlag;
+                        });
+
+                        if (this->SuicideFlag)
+                            return;
+                        else
+                            task = this->ConsumeTask();
+                    }
+                    task();
                 }
-            }));
+            });
         }
     }
 
-    // ThreadPool(ThreadPool &&) = default;
+    ~ThreadPool()
+    {
+        SuicideFlag = true;
+        ConditionVar.notify_all();
+        for (auto &&thread : Threads)
+        {
+            thread.join();
+        }
+    }
+
+    ThreadPool(ThreadPool &&) = delete;
+    ThreadPool &operator==(ThreadPool &&) = delete;
     ThreadPool(const ThreadPool &) = delete;
     ThreadPool &operator==(const ThreadPool &) = delete;
 
-    std::function<void(void)> ConsumeTask()
+    std::packaged_task<int()> ConsumeTask()
     {
         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-        auto ret = Tasks.back();
+        auto ret = std::move(Tasks.back());
         Tasks.pop_back();
         return ret;
     }
 
-    void EnqueueTask(std::function<void(void)> task)
+    std::future<int> EnqueueTask(std::function<int(int)> task, int parameter)
     {
-        auto lock = std::lock_guard<std::mutex>(TasksMutex);
-        Tasks.push_front(task);
+        auto packaged = std::packaged_task<int()>(std::bind(task, parameter));
+        {
+            auto lock = std::lock_guard<std::mutex>(TasksMutex);
+            Tasks.push_front(packaged);
+        }
+        ConditionVar.notify_one();
+        return packaged.get_future();
+    }
+
+    void WaitToFinish()
+    {
+        auto lock = std::unique_lock<std::mutex>(this->TasksMutex);
+        this->ConditionVar.wait(lock, [this]() { return this->Tasks.empty(); });
     }
 
 private:
+    bool SuicideFlag;
     std::vector<std::thread> Threads;
-    std::deque<std::function<void(void)>> Tasks;
+    std::deque<std::packaged_task<int()>> Tasks;
     std::mutex TasksMutex;
+    std::condition_variable ConditionVar;
 };
