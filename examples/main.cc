@@ -1,6 +1,8 @@
 #include <print>
 #include <source_location>
-#include "ThreadPool.h"
+#include <stp/ThreadPool.h>
+
+using stp::ThreadPool;
 
 int main()
 {

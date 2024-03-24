@@ -1,3 +1,3 @@
-export module lib;
+export module stp;
 
 export import :ThreadPool;

@@ -1,7 +1,7 @@
 export module main;
 import std;
-import lib;
-using namespace lib;
+import stp;
+using stp::ThreadPool;
 
 export int main()
 {

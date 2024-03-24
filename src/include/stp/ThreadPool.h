@@ -4,6 +4,9 @@
 #include <thread>
 #include <vector>
 
+namespace stp
+{
+
 class ThreadPool
 {
 public:
@@ -81,3 +84,5 @@ private:
     std::mutex TasksMutex;
     std::condition_variable ConditionVar;
 };
+
+} // namespace stp

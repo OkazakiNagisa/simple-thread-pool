@@ -1,33 +1,14 @@
 cmake_minimum_required(VERSION 3.23)
 project("simple-thread-pool")
 
-add_executable(${PROJECT_NAME})
+# library target
+add_library(${PROJECT_NAME} INTERFACE)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 23)
-target_sources(
-    ${PROJECT_NAME}
-    PRIVATE
-        src/main.cc
+target_include_directories(${PROJECT_NAME} INTERFACE src/include)
+
+# library test demo target
+add_executable(${PROJECT_NAME}_demo
+    examples/main.cc
 )
-
-# add_executable(${PROJECT_NAME}_module)
-# set_target_properties(${PROJECT_NAME}_module PROPERTIES CXX_STANDARD 23)
-# target_sources(
-#     ${PROJECT_NAME}_module
-#     PRIVATE FILE_SET cxx_modules TYPE CXX_MODULES
-#     FILES
-#         src_module/main.cppm
-#         src_module/lib.cppm
-#         src_module/ThreadPool.cppm
-# )
-
-# add_library(std_module)
-# set_target_properties(std_module PROPERTIES CXX_STANDARD 23)
-# target_sources(
-#     std_module
-#     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
-#     FILES
-#         std_module/std.ixx
-#         std_module/std.compat.ixx
-# )
-
-# target_link_libraries(${PROJECT_NAME}_module PRIVATE std_module)
+set_target_properties(${PROJECT_NAME}_demo PROPERTIES CXX_STANDARD 23)
+target_link_libraries(${PROJECT_NAME}_demo PRIVATE ${PROJECT_NAME})
