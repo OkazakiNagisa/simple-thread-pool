@@ -55,7 +55,7 @@ public:
     std::packaged_task<int()> ConsumeTask()
     {
         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-        auto ret = std::move(Tasks.back());
+        auto &&ret = std::move(Tasks.back());
         Tasks.pop_back();
         return ret;
     }
@@ -65,7 +65,7 @@ public:
         auto packaged = std::packaged_task<int()>(std::bind(task, parameter));
         {
             auto lock = std::lock_guard<std::mutex>(TasksMutex);
-            Tasks.push_front(packaged);
+            Tasks.push_front(std::move(packaged));
         }
         ConditionVar.notify_one();
         return packaged.get_future();
