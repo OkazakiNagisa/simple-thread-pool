@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <deque>
 #include <future>
 #include <thread>
@@ -11,7 +12,7 @@ class ThreadPool
 {
 public:
     explicit ThreadPool(const int threadsCount)
-        : SuicideFlag(false), Threads(threadsCount)
+        : SuicideFlag(false)
     {
         for (int i = 0; i < threadsCount; i++)
         {
@@ -23,7 +24,8 @@ public:
                         auto lock =
                             std::unique_lock<std::mutex>(this->TasksMutex);
                         this->ConditionVar.wait(lock, [this]() {
-                            return this->Tasks.size() > 0 || this->SuicideFlag;
+                            return this->Tasks.size() > 0 ||
+                                   SuicideFlag.load(std::memory_order::acquire);
                         });
 
                         if (this->SuicideFlag)
@@ -42,10 +44,7 @@ public:
 
     ~ThreadPool()
     {
-        {
-            auto lock = std::lock_guard<std::mutex>(TasksMutex);
-            SuicideFlag = true;
-        }
+        SuicideFlag.store(true, std::memory_order::release);
         ConditionVar.notify_all();
         for (auto &&thread : Threads)
         {
@@ -77,7 +76,7 @@ public:
     }
 
 private:
-    bool SuicideFlag;
+    std::atomic_bool SuicideFlag;
     std::vector<std::thread> Threads;
     std::deque<std::packaged_task<int()>> Tasks;
     std::mutex TasksMutex;
