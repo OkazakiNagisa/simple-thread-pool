@@ -59,64 +59,17 @@ public:
     ThreadPool(const ThreadPool &) = delete;
     ThreadPool &operator==(const ThreadPool &) = delete;
 
-    // std::future<int> EnqueueTask(std::function<int(int)> task, int parameter)
-    // {
-    //     auto packaged = std::packaged_task<int()>(std::bind(task,
-    //     parameter)); auto ret = packaged.get_future();
-    //     {
-    //         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-    //         Tasks.push_front(std::move(packaged));
-    //     }
-    //     ConditionVar.notify_one();
-    //     return ret;
-    // }
-
-    // template <typename Ret, typename Args>
-    // std::future<Ret> EnqueueTask(std::function<Ret(Args)> task,
-    //                              Args parameters)
-    // {
-    //     auto packaged =
-    //         std::packaged_task<Ret(Args)>(std::bind(task, parameters));
-    //     auto ret = packaged.get_future();
-    //     {
-    //         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-    //         Tasks.emplace_front([=] { packaged(); });
-    //     }
-    //     ConditionVar.notify_one();
-    //     return ret;
-    // }
-
     // template <typename F, typename... Args>
     // auto EnqueueTask(F &&task, Args &&...parameters)
     //     -> std::future<decltype(task(parameters...))>
     // {
     //     using Ret = decltype(task(parameters...));
-    //     auto packaged =
-    //         std::packaged_task<Ret()>(std::bind(std::forward<F>(task),
-    //         std::forward<Args>(parameters)...));
-    //     auto ret = packaged.get_future();
-    //     auto p = packaged; // packaged_task not copy-constructable
-    //     std::function<void()> f = [=] -> void { packaged(); };
-    //     {
-    //         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-    //         Tasks.emplace_front(f);
-    //     }
-    //     ConditionVar.notify_one();
-    //     return ret;
-    // }
-
-    // template <typename F, typename... Args>
-    // auto EnqueueTask(F &&task, Args &&...parameters)
-    //     -> std::future<decltype(task(parameters...))>
-    // {
-    //     using Ret = decltype(task(parameters...));
-    //     auto packaged =
-    //         std::packaged_task<Ret()>(std::bind(std::forward<F>(task),
-    //         std::forward<Args>(parameters)...));
+    //     auto packaged = std::packaged_task<Ret()>(std::bind(
+    //         std::forward<F>(task), std::forward<Args>(parameters)...));
     //     auto ret = packaged.get_future();
     //     std::function<void()> f = [p = std::move(packaged)] mutable -> void {
-    //     /* p();
-    //     */ };
+    //         p();
+    //     };
     //     {
     //         auto lock = std::lock_guard<std::mutex>(TasksMutex);
     //         Tasks.emplace_front(f);

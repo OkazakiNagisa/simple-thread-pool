@@ -1,14 +1,30 @@
 cmake_minimum_required(VERSION 3.23)
 project("simple-thread-pool")
 
-# library target
+# simple thread pool library target
 add_library(${PROJECT_NAME} INTERFACE)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 23)
 target_include_directories(${PROJECT_NAME} INTERFACE src/include)
 
-# library test demo target
-add_executable(${PROJECT_NAME}_demo
+add_library(${PROJECT_NAME}_cxxmodule)
+set_target_properties(${PROJECT_NAME}_cxxmodule PROPERTIES CXX_STANDARD 23)
+target_sources(
+    ${PROJECT_NAME}_cxxmodule
+    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+    FILES
+        src/cxx20_module/stp.cppm
+        src/cxx20_module/stp/ThreadPool.cppm
+)
+
+# demo target
+add_executable(stp_demo
     example/main.cc
 )
-set_target_properties(${PROJECT_NAME}_demo PROPERTIES CXX_STANDARD 23)
-target_link_libraries(${PROJECT_NAME}_demo PRIVATE ${PROJECT_NAME})
+set_target_properties(stp_demo PROPERTIES CXX_STANDARD 23)
+target_link_libraries(stp_demo PRIVATE ${PROJECT_NAME})
+
+add_executable(stp_demo_cxxmodule
+    example/cxx20_module/main.cppm
+)
+set_target_properties(stp_demo_cxxmodule PROPERTIES CXX_STANDARD 23)
+target_link_libraries(stp_demo_cxxmodule PRIVATE ${PROJECT_NAME}_cxxmodule)
