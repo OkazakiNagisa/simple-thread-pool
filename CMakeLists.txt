@@ -23,18 +23,18 @@ add_executable(stp_demo
 set_target_properties(stp_demo PROPERTIES CXX_STANDARD 23)
 target_link_libraries(stp_demo PRIVATE ${PROJECT_NAME})
 
-add_library(std_cxxmodule)
-set_target_properties(std_cxxmodule PROPERTIES CXX_STANDARD 23)
-target_sources(
-    std_cxxmodule
-    PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
-    FILES
-        example/cxx20_module/std/std.compat.ixx
-        example/cxx20_module/std/std.ixx
-)
+# add_library(std_cxxmodule)
+# set_target_properties(std_cxxmodule PROPERTIES CXX_STANDARD 23)
+# target_sources(
+#     std_cxxmodule
+#     PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+#     FILES
+#         example/cxx20_module/std/std.compat.ixx
+#         example/cxx20_module/std/std.ixx
+# )
 
 add_executable(stp_demo_cxxmodule
     example/cxx20_module/main.cc
 )
 set_target_properties(stp_demo_cxxmodule PROPERTIES CXX_STANDARD 23)
-target_link_libraries(stp_demo_cxxmodule PRIVATE ${PROJECT_NAME}_cxxmodule std_cxxmodule)
+target_link_libraries(stp_demo_cxxmodule PRIVATE ${PROJECT_NAME}_cxxmodule)

@@ -14,7 +14,9 @@ namespace stp
 class ThreadPool
 {
 public:
-    explicit ThreadPool(const int threadsCount) : SuicideFlag(false)
+    explicit ThreadPool(
+        const int threadsCount = std::thread::hardware_concurrency())
+        : SuicideFlag(false)
     {
         for (int i = 0; i < threadsCount; i++)
         {
