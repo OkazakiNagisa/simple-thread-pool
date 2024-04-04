@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 project("simple-thread-pool")
 
+find_package(Catch2 CONFIG REQUIRED)
+
 # simple thread pool library target
 add_library(${PROJECT_NAME} INTERFACE)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 23)
