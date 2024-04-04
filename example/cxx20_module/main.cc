@@ -1,9 +1,8 @@
-export module main;
-// import std;
+import std;
 import stp;
 using stp::ThreadPool;
 
-export int main()
+int main()
 {
     ThreadPool tp;
     // std::println("Hello from {}!",
