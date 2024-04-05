@@ -3,7 +3,7 @@
 
 using stp::ThreadPool;
 
-TEST_CASE("Evaluate task future correctness", "[stp]")
+TEST_CASE("Evaluate task execution correctness", "[stp]")
 {
     ThreadPool tp;
     auto f = [](int a) {
@@ -20,8 +20,29 @@ TEST_CASE("Evaluate task future correctness", "[stp]")
     tp.WaitAll();
 }
 
-TEST_CASE("Evaluate multi tasks", "[stp]")
+TEST_CASE("Multi tasks", "[stp]")
 {
     ThreadPool tp;
+    auto f = [](int in, int num) {
+        int ret = 0;
+        for (int i = 0; i < in; i++)
+        {
+            ret += 10 * i;
+        }
+        return std::tuple(ret, num);
+    };
+    std::vector<std::future<std::tuple<int, int>>> futures;
+    for (int i = 0; i < 10000; i++)
+    {
+        futures.emplace_back(tp.EnqueueTask(f, 1000000, i));
+    }
+
+    auto [result, _] = f(1000000, 0);
+    for (auto &&future : futures)
+    {
+        auto [ret, num] = future.get();
+        REQUIRE(ret == result);
+    }
+
     tp.WaitAll();
 }
