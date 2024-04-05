@@ -2,6 +2,20 @@
     "version": 6,
     "configurePresets": [
         {
+            "name": "base-x64-debug",
+            "hidden": true,
+            "inherits": [
+                "arch.x86.64"
+            ],
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
             "name": "arch.x86.32",
             "hidden": true,
             "architecture": {

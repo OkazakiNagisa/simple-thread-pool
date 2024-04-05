@@ -2,39 +2,25 @@
     "version": 6,
     "configurePresets": [
         {
-            "name": "clang",
+            "name": "clang-x64-debug",
             "inherits": [
                 "compiler.clang",
-                "base"
+                "base-x64-debug"
             ]
         },
         {
-            "name": "clangcl",
+            "name": "clangcl-x64-debug",
             "inherits": [
                 "compiler.clangcl",
-                "base"
+                "base-x64-debug"
             ]
         },
         {
-            "name": "msvc",
+            "name": "msvc-x64-debug",
             "inherits": [
                 "compiler.msvc",
-                "base"
+                "base-x64-debug"
             ]
-        },
-        {
-            "name": "base",
-            "hidden": true,
-            "inherits": [
-                "arch.x86.64"
-            ],
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            }
         }
     ]
 }
