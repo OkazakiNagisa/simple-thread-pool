@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.28)
 project("simple-thread-pool")
 
+include(CTest)
+enable_testing()
+
 find_package(Catch2 CONFIG REQUIRED)
+include(Catch)
 
 # simple thread pool library target
 add_library(${PROJECT_NAME} INTERFACE)
@@ -40,3 +44,9 @@ add_executable(stp_demo_cxxmodule
 )
 set_target_properties(stp_demo_cxxmodule PROPERTIES CXX_STANDARD 23)
 target_link_libraries(stp_demo_cxxmodule PRIVATE ${PROJECT_NAME}_cxxmodule)
+
+# tests
+add_executable(stp_test test/simple_test.cc)
+set_target_properties(stp_test PROPERTIES CXX_STANDARD 23)
+target_link_libraries(stp_test PRIVATE Catch2::Catch2WithMain ${PROJECT_NAME})
+catch_discover_tests(stp_test)
