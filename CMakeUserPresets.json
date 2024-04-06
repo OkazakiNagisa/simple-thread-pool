@@ -21,6 +21,17 @@
                 "compiler.msvc",
                 "base-x64-debug"
             ]
+        },
+        {
+            "name": "base-x64-debug",
+            "hidden": true,
+            "inherits": [
+                "base",
+                "arch.x86.64"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         }
     ]
 }
