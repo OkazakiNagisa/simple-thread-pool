@@ -5,6 +5,7 @@
 #include <future>
 #include <memory>
 #include <thread>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -29,7 +30,7 @@ public:
                             std::unique_lock<std::mutex>(this->TasksMutex);
                         this->ConditionVar.wait(lock, [this]() {
                             return this->Tasks.size() > 0 ||
-                                   SuicideFlag.load(std::memory_order::acquire);
+                                   SuicideFlag.load(std::memory_order::relaxed);
                         });
 
                         if (this->SuicideFlag)
@@ -48,7 +49,7 @@ public:
 
     ~ThreadPool()
     {
-        SuicideFlag.store(true, std::memory_order::release);
+        SuicideFlag.store(true, std::memory_order::relaxed);
         ConditionVar.notify_all();
         for (auto &&thread : Threads)
         {
@@ -61,36 +62,18 @@ public:
     ThreadPool(const ThreadPool &) = delete;
     ThreadPool &operator==(const ThreadPool &) = delete;
 
-    // template <typename F, typename... Args>
-    // auto EnqueueTask(F &&task, Args &&...parameters)
-    //     -> std::future<decltype(task(parameters...))>
-    // {
-    //     using Ret = decltype(task(parameters...));
-    //     auto packaged = std::packaged_task<Ret()>(std::bind(
-    //         std::forward<F>(task), std::forward<Args>(parameters)...));
-    //     auto ret = packaged.get_future();
-    //     std::function<void()> f = [p = std::move(packaged)] mutable -> void {
-    //         p();
-    //     };
-    //     {
-    //         auto lock = std::lock_guard<std::mutex>(TasksMutex);
-    //         Tasks.emplace_front(f);
-    //     }
-    //     ConditionVar.notify_one();
-    //     return ret;
-    // }
-
     template <typename F, typename... Args>
     auto EnqueueTask(F &&task, Args &&...parameters)
         -> std::future<decltype(task(parameters...))>
     {
+        // using Ret = std::invoke_result_t<F(Args...)>;
         using Ret = decltype(task(parameters...));
         auto packaged = std::make_shared<std::packaged_task<Ret()>>(std::bind(
             std::forward<F>(task), std::forward<Args>(parameters)...));
         auto ret = packaged->get_future();
         {
             auto lock = std::lock_guard<std::mutex>(TasksMutex);
-            Tasks.emplace_front([=] -> void { (*packaged)(); });
+            Tasks.emplace_front([=] { (*packaged)(); });
         }
         ConditionVar.notify_one();
         return ret;

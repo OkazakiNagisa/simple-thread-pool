@@ -50,3 +50,7 @@ add_executable(stp_test test/simple_test.cc)
 set_target_properties(stp_test PROPERTIES CXX_STANDARD 23)
 target_link_libraries(stp_test PRIVATE Catch2::Catch2WithMain ${PROJECT_NAME})
 catch_discover_tests(stp_test)
+
+# install
+# install(TARGETS ${PROJECT_NAME} EXPORT stp DESTINATION lib/stp)
+# install(EXPORT stp NAMESPACE stp:: DESTINATION lib/stp)

@@ -9,6 +9,7 @@
             ],
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
+            "installDir": "${sourceDir}/build/install",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
