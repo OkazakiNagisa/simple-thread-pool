@@ -12,6 +12,9 @@
 namespace stp
 {
 
+template <typename F, typename... Args>
+concept CallableWithArgs = requires(F f, Args... args) { f(args...); };
+
 class ThreadPool
 {
 public:
@@ -63,17 +66,18 @@ public:
     ThreadPool &operator==(const ThreadPool &) = delete;
 
     template <typename F, typename... Args>
+        requires CallableWithArgs<F, Args...>
     auto EnqueueTask(F &&task, Args &&...parameters)
-        -> std::future<decltype(task(parameters...))>
+        -> std::future<std::invoke_result_t<F, Args...>>
     {
-        // using Ret = std::invoke_result_t<F(Args...)>;
-        using Ret = decltype(task(parameters...));
+        using Ret = std::invoke_result_t<F, Args...>;
         auto packaged = std::make_shared<std::packaged_task<Ret()>>(std::bind(
             std::forward<F>(task), std::forward<Args>(parameters)...));
         auto ret = packaged->get_future();
         {
             auto lock = std::lock_guard<std::mutex>(TasksMutex);
-            Tasks.emplace_front([=] { (*packaged)(); });
+            Tasks.emplace_front(
+                [packaged = std::move(packaged)] { (*packaged)(); });
         }
         ConditionVar.notify_one();
         return ret;
