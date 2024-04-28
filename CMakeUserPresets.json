@@ -2,21 +2,21 @@
     "version": 6,
     "configurePresets": [
         {
-            "name": "clang-x64-debug",
+            "name": "x64-clang-debug",
             "inherits": [
                 "compiler.clang",
                 "base-x64-debug"
             ]
         },
         {
-            "name": "clangcl-x64-debug",
+            "name": "x64-clangcl-debug",
             "inherits": [
                 "compiler.clangcl",
                 "base-x64-debug"
             ]
         },
         {
-            "name": "msvc-x64-debug",
+            "name": "x64-msvc-debug",
             "inherits": [
                 "compiler.msvc",
                 "base-x64-debug"
