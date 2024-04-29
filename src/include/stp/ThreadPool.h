@@ -19,7 +19,7 @@ class ThreadPool
 {
 public:
     explicit ThreadPool(
-        const int threadsCount = std::thread::hardware_concurrency())
+        const unsigned int threadsCount = std::thread::hardware_concurrency())
         : SuicideFlag(false)
     {
         for (int i = 0; i < threadsCount; i++)
@@ -32,7 +32,7 @@ public:
                         auto lock =
                             std::unique_lock<std::mutex>(this->TasksMutex);
                         this->ConditionVar.wait(lock, [this]() {
-                            return this->Tasks.size() > 0 ||
+                            return !this->Tasks.empty() ||
                                    SuicideFlag.load(std::memory_order::relaxed);
                         });
 
