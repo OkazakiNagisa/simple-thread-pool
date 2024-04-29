@@ -71,8 +71,11 @@ public:
         -> std::future<std::invoke_result_t<F, Args...>>
     {
         using Ret = std::invoke_result_t<F, Args...>;
-        auto packaged = std::make_shared<std::packaged_task<Ret()>>(std::bind(
-            std::forward<F>(task), std::forward<Args>(parameters)...));
+        auto boundTask = [task = std::forward<F>(task),
+                          ... parameters = std::forward<Args>(parameters)] {
+            return task(parameters...);
+        };
+        auto packaged = std::make_shared<std::packaged_task<Ret()>>(boundTask);
         auto ret = packaged->get_future();
         {
             auto lock = std::lock_guard<std::mutex>(TasksMutex);
